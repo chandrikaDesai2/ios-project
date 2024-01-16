@@ -1,0 +1,67 @@
+ViewController.swift
+//  jesonData
+//
+//  Created by chandrika on 01/01/22.
+//
+
+import UIKit
+
+class ViewController: UIViewController {
+    var countryData = [CapitalNames]()
+    
+    @IBOutlet var mytabelview: UITableView!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        fetchData()
+    }
+
+    func fetchData()
+    
+    {
+        let url = URL(string: "http://haritibhakti.com/capitalnames.json")
+        let datatask = URLSession.shared.dataTask(with: url!, completionHandler: {
+            (data,response,error)in
+            guard let data = data , error == nil else
+            {
+                print("error Occured while Accessing Data with URL")
+                return
+            }
+            var cList = [CapitalNames]()
+            do
+            {
+                cList = try JSONDecoder().decode([CapitalNames].self, from: data)
+                
+                
+            }
+            catch
+            {
+                print("error Occured while Decoding JSON into swift Structure \(error)")
+            }
+            self.countryData = cList
+            DispatchQueue.main.async {
+                self.mytabelview.reloadData()
+            }
+        
+        
+        
+          dataTask.resume()
+            
+        }
+                                                  
+                                                  
+    
+        extension ViewController: UITableViewDelegate,UITableViewDataSource
+{
+            func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+            return countryData.count
+        }
+                                                  
+                                                  func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+            let cell = mytabelview.dequeueReusableCell(withIdentifier: "cell",for: indexPath )
+            cell.textLabel?.text = "\(indexPath.row+1). \(countryData[indexPath.row].countryname)"
+            cell.detailTextLabel?.text = "\(countryData[indexPath.row].capitalname)"
+            return cell
+        }
+                                                  
+}
